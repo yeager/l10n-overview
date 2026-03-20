@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L10n Overview - Svenska översättningar i Open Source</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header class="hero">
+        <nav class="navbar">
+            <div class="nav-container">
+                <div class="nav-brand">
+                    <i class="fas fa-language"></i>
+                    <span>L10n Overview</span>
+                </div>
+                <div class="nav-links">
+                    <a href="#dashboard">Dashboard</a>
+                    <a href="#projects">Projekt</a>
+                    <a href="#statistics">Statistik</a>
+                    <a href="https://danielnylander.se" target="_blank">Daniel Nylander</a>
+                </div>
+            </div>
+        </nav>
+        <div class="hero-content">
+            <h1>Svenska översättningar i Open Source</h1>
+            <p>Övervakning av lokaliseringsstatus för de 5000 största open source-projekten</p>
+            <div class="hero-stats">
+                <div class="stat-card">
+                    <div class="stat-number" id="total-projects">5,247</div>
+                    <div class="stat-label">Projekt övervakade</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="swedish-projects">892</div>
+                    <div class="stat-label">Med svensk översättning</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="complete-projects">156</div>
+                    <div class="stat-label">Kompletta (90%+)</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="updated-today">23</div>
+                    <div class="stat-label">Uppdaterade idag</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section id="dashboard" class="dashboard">
+            <div class="container">
+                <h2>Dashboard</h2>
+                <div class="dashboard-grid">
+                    <div class="chart-container">
+                        <h3>Översättningskvalitet fördelning</h3>
+                        <canvas id="qualityChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <h3>Aktivitet senaste 30 dagarna</h3>
+                        <canvas id="activityChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <h3>Populära plattformar</h3>
+                        <canvas id="platformChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <h3>Kategorier med svenska stöd</h3>
+                        <canvas id="categoryChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="projects" class="projects">
+            <div class="container">
+                <div class="projects-header">
+                    <h2>Projekt översikt</h2>
+                    <div class="projects-controls">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="search" placeholder="Sök projekt, kategori eller plattform...">
+                        </div>
+                        <div class="filter-controls">
+                            <select id="category-filter">
+                                <option value="">Alla kategorier</option>
+                                <option value="development">Utveckling</option>
+                                <option value="desktop">Skrivbord</option>
+                                <option value="web">Webb</option>
+                                <option value="mobile">Mobil</option>
+                                <option value="system">System</option>
+                                <option value="media">Media</option>
+                                <option value="games">Spel</option>
+                                <option value="security">Säkerhet</option>
+                            </select>
+                            <select id="status-filter">
+                                <option value="">Alla status</option>
+                                <option value="complete">Komplett (90%+)</option>
+                                <option value="partial">Delvis (50-89%)</option>
+                                <option value="minimal">Minimal (10-49%)</option>
+                                <option value="none">Ingen (0-9%)</option>
+                                <option value="missing">Saknas helt</option>
+                            </select>
+                            <select id="platform-filter">
+                                <option value="">Alla plattformar</option>
+                                <option value="weblate">Weblate</option>
+                                <option value="crowdin">Crowdin</option>
+                                <option value="transifex">Transifex</option>
+                                <option value="github">GitHub</option>
+                                <option value="kde">KDE</option>
+                                <option value="gnome">GNOME</option>
+                                <option value="other">Övrigt</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="projects-table-container">
+                    <table id="projects-table" class="projects-table">
+                        <thead>
+                            <tr>
+                                <th data-sort="name">Projekt <i class="fas fa-sort"></i></th>
+                                <th data-sort="category">Kategori <i class="fas fa-sort"></i></th>
+                                <th data-sort="stars">Stars <i class="fas fa-sort"></i></th>
+                                <th data-sort="platform">Plattform <i class="fas fa-sort"></i></th>
+                                <th data-sort="swedish_progress">Svensk status <i class="fas fa-sort"></i></th>
+                                <th data-sort="last_update">Senast uppdaterad <i class="fas fa-sort"></i></th>
+                                <th data-sort="quality">Kvalitet <i class="fas fa-sort"></i></th>
+                                <th>Åtgärder</th>
+                            </tr>
+                        </thead>
+                        <tbody id="projects-tbody">
+                            <!-- Data laddas dynamiskt -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="pagination">
+                    <div class="pagination-info">
+                        Visar <span id="showing-start">1</span>-<span id="showing-end">50</span> av <span id="total-showing">5247</span> projekt
+                    </div>
+                    <div class="pagination-controls">
+                        <button id="prev-page" class="btn btn-sm" disabled>
+                            <i class="fas fa-chevron-left"></i> Föregående
+                        </button>
+                        <span id="current-page">1</span> av <span id="total-pages">105</span>
+                        <button id="next-page" class="btn btn-sm">
+                            Nästa <i class="fas fa-chevron-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="statistics" class="statistics">
+            <div class="container">
+                <h2>Detaljerad statistik</h2>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-icon"><i class="fas fa-code-branch"></i></div>
+                        <div class="stat-content">
+                            <div class="stat-value">2,847</div>
+                            <div class="stat-desc">Projekt på GitHub</div>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon"><i class="fas fa-globe"></i></div>
+                        <div class="stat-content">
+                            <div class="stat-value">1,543</div>
+                            <div class="stat-desc">Projekt på Weblate</div>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon"><i class="fas fa-comments"></i></div>
+                        <div class="stat-content">
+                            <div class="stat-value">12.7M</div>
+                            <div class="stat-desc">Totala strängar</div>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon"><i class="fas fa-flag"></i></div>
+                        <div class="stat-content">
+                            <div class="stat-value">3.2M</div>
+                            <div class="stat-desc">Svenska strängar</div>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon"><i class="fas fa-star"></i></div>
+                        <div class="stat-content">
+                            <div class="stat-value">8.7/10</div>
+                            <div class="stat-desc">Genomsnittlig kvalitet</div>
+                        </div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                        <div class="stat-content">
+                            <div class="stat-value">2h 15m</div>
+                            <div class="stat-desc">Senaste uppdatering</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Om L10n Overview</h3>
+                    <p>Ett verktyg för att övervaka svenska översättningar i open source-projekt. Skapad för att hjälpa svenska utvecklare och översättare att hitta projekt som behöver hjälp.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Datakällor</h3>
+                    <ul>
+                        <li><a href="https://weblate.org">Weblate</a></li>
+                        <li><a href="https://crowdin.com">Crowdin</a></li>
+                        <li><a href="https://www.transifex.com">Transifex</a></li>
+                        <li><a href="https://github.com">GitHub</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Kontakt</h3>
+                    <p>Skapat av <a href="https://danielnylander.se">Daniel Nylander</a></p>
+                    <div class="social-links">
+                        <a href="https://github.com/yeager"><i class="fab fa-github"></i></a>
+                        <a href="https://twitter.com/danielnylander"><i class="fab fa-twitter"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Daniel Nylander. Uppdateras automatiskt varje timme.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="data.js"></script>
+    <script src="charts.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
