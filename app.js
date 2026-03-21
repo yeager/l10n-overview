@@ -336,7 +336,8 @@ class L10nApp {
     }
 
     formatDate(date) {
-        return date.toLocaleDateString('sv-SE', {
+        const d = date instanceof Date ? date : new Date(date);
+        return d.toLocaleDateString('sv-SE', {
             year: 'numeric',
             month: 'short',
             day: 'numeric'
@@ -344,8 +345,9 @@ class L10nApp {
     }
 
     getTimeAgo(date) {
+        const d = date instanceof Date ? date : new Date(date);
         const now = new Date();
-        const diff = now - date;
+        const diff = now - d;
         const days = Math.floor(diff / (1000 * 60 * 60 * 24));
 
         if (days === 0) return 'Idag';
